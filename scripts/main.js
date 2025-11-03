@@ -19,6 +19,7 @@
 // get refs to the input and output elements in the page
 const input = document.getElementById("target");
 const output = document.querySelector("output");
+const list = document.getElementById("available-targets");
 
 // when the input has focus and enter is pressed, invoke the function named later
 input.addEventListener("keydown", (ev) => {
@@ -26,6 +27,12 @@ input.addEventListener("keydown", (ev) => {
   if (ev.key === "Enter") {
     console.log("Enter detected. current value:", input.value);
     // TODO use the provided later() function here
+    const query = input.value.trim();
+    if (query) {
+      options(renderOptions, query);
+    } else {
+      options(renderOptions);
+    }
   }
 });
 
@@ -40,6 +47,7 @@ input.addEventListener("keydown", (ev) => {
 const setOutput = (result) => {
   console.log("setOutput", result);
   // TODO see comments just above 🙄
+  output.textContent = `${result.valediction}, ${result.target}`;
 };
 
 // for Part 2
@@ -48,3 +56,33 @@ const setOutput = (result) => {
 // (if the user hasn't entered anything, simply exclude the query argument in your invocation to options).
 // add each of the resulting target options as buttons in list items in the ul.
 // when any of these buttons are clicked, user the later() function to request the corresponding valediction and update the output element as in Part 1
+
+const renderOptions = (keys) => {
+  list.innerHTML = "";
+  if (!keys) {
+    const li = document.createElement("li");
+    li.textContent = "No matches.";
+    list.appendChild(li);
+    return;
+  }
+  keys.forEach((k) => {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = k;
+    btn.addEventListener("click", () => {
+      later(k, setOutput);
+    });
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+};
+
+input.addEventListener("input", () => {
+  const query = input.value.trim();
+  if (query) {
+    options(renderOptions, query);
+  } else {
+    options(renderOptions);
+  }
+});
